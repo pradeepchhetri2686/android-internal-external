@@ -6,7 +6,10 @@ import eu.codlab.int2ext.ShellCommand.CommandResult;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.Environment;
 import android.util.Log;
 
 public class CopyProgram {
@@ -25,6 +28,8 @@ public class CopyProgram {
 	private String _external_mount_point;
 	private String _device_block;
 
+	private Context _context;
+
 	private CopyProgram(){
 		_internal_mount_point="";
 		_external_mount_point="";
@@ -33,6 +38,7 @@ public class CopyProgram {
 
 	public CopyProgram(Context context){
 		this();
+		_context = context;
 		if(cmd == null)
 			cmd = new ShellCommand();
 		SharedPreferences _sh = context.getSharedPreferences(PREFERENCES, 0);
@@ -195,7 +201,7 @@ public class CopyProgram {
 		cmd.su.runWaitFor("echo 'mount -o bind /data/internal_sd "+_external_mount_point+"'>> /system/etc/11extsd2internalsd");
 		return CopyProgram.APK_SYS_SUCCESS;
 	}
-	
+
 	public int removeProgram(){
 		String device = executeSuMount();
 		if(device != null){
@@ -223,8 +229,13 @@ public class CopyProgram {
 
 	public void copyProgramBoot(){
 		cmd.su.runWaitFor("/system/etc/11extsd2internalsd");
+		try{
+			_context.sendBroadcast(new Intent("android.intent.action.MEDIA_MOUNTED", Uri.parse("file://"+Environment.getExternalStorageDirectory())));
+		}catch(Exception e){
+
+		}
 	}
-	
+
 	public int copyProgramSoft(){
 		String device = executeSuMount();
 		if(device != null){
@@ -234,9 +245,22 @@ public class CopyProgram {
 			cmd.su.runWaitFor("mount -t "+getDeviceType(_device_block)+" -o umask=0000 "+_device_block+" "+_internal_mount_point+"");
 			cmd.su.runWaitFor("mount -o bind /data/internal_sd "+_external_mount_point+"");
 			cmd.su.runWaitFor(getRemountRead(device));
+			checkMediaRescan();
 			return CopyProgram.APK_SYS_SUCCESS;
 		}else{
 			return CopyProgram.APK_SYS_COULDNOTCREATE;
+		}
+	}
+
+	private void checkMediaRescan(){
+		try{
+			if(_context != null){
+				SharedPreferences _sh = _context.getSharedPreferences(PREFERENCES, 0);
+				if(_sh != null && _sh.getBoolean("sendrescan", false))
+					_context.sendBroadcast(new Intent("android.intent.action.MEDIA_MOUNTED", Uri.parse("file://"+Environment.getExternalStorageDirectory())));
+			}
+		}catch(Exception e){
+			e.printStackTrace();
 		}
 	}
 }

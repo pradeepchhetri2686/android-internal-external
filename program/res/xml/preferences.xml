@@ -5,37 +5,48 @@
         android:key="rom"
         android:title="@string/choosemode" >
     </PreferenceCategory>
-    <!-- <PreferenceCategory
+    <!--
+    <PreferenceCategory
         android:key="favorites"
         android:title="Batiments" >
-    </PreferenceCategory> -->
+    </PreferenceCategory>
+    -->
+    <PreferenceCategory
+        android:key="optionnal"
+        android:title="@string/optionnal" >
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="sendrescan"
+            android:summary="@string/sendrescansummary"
+            android:title="@string/sendrescantitle" />
+    </PreferenceCategory>
     <PreferenceCategory
         android:key="custompreferences"
-        android:title="@string/custommode">
+        android:title="@string/custommode" >
         <CheckBoxPreference
+            android:defaultValue="false"
             android:key="customdefault"
-            android:title="@string/customdefault"
             android:summary="@string/customdefaults"
-            android:defaultValue="false" />
-        <EditTextPreference
-            android:key="custominternal"
-            android:title="@string/custominternal"
-            android:summary="@string/custominternals"
-            android:defaultValue="/mnt/sdcard" />
-        <EditTextPreference
-            android:key="customexternal"
-            android:title="@string/customexternal"
-            android:summary="@string/customexternals"
-            android:defaultValue="/mnt/extSdCard" />
-        <EditTextPreference
-            android:key="customblock"
-            android:title="@string/customblock"
-            android:summary="@string/customblocks"
-            android:defaultValue="/dev/block/vold/179:49" />
-    </PreferenceCategory>
+            android:title="@string/customdefault" />
 
+        <EditTextPreference
+            android:defaultValue="/mnt/sdcard"
+            android:key="custominternal"
+            android:summary="@string/custominternals"
+            android:title="@string/custominternal" />
+        <EditTextPreference
+            android:defaultValue="/mnt/extSdCard"
+            android:key="customexternal"
+            android:summary="@string/customexternals"
+            android:title="@string/customexternal" />
+        <EditTextPreference
+            android:defaultValue="/dev/block/vold/179:49"
+            android:key="customblock"
+            android:summary="@string/customblocks"
+            android:title="@string/customblock" />
+    </PreferenceCategory>
     <PreferenceCategory
         android:key="mounts"
         android:title="@string/viewmounts" />
-    
+
 </PreferenceScreen>
